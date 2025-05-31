@@ -1,0 +1,55 @@
+{
+  "version": "1.0.0",
+  "exportDate": "2025-05-31T08:57:32.516Z",
+  "bookmarks": [
+    {
+      "id": "mbbzetzlrvy6jz9322",
+      "name": "123",
+      "uri": "file:///d%3A/Experiment/vscode-bookmark-plugin/src/bookmarkProvider.ts",
+      "position": {
+        "line": 98,
+        "character": 5
+      },
+      "folderId": "mbbyyp3tod4ilr1h2hc"
+    },
+    {
+      "id": "mbbzqxakenf30ywcql7",
+      "name": "123",
+      "uri": "file:///d%3A/Experiment/vscode-bookmark-plugin/package.nls.zh-cn.json",
+      "position": {
+        "line": 10,
+        "character": 34
+      },
+      "folderId": "mbbyyjxfgp2qewkrw4h"
+    },
+    {
+      "id": "mbbzr9x5saev5rxiktf",
+      "name": "123213241995",
+      "uri": "file:///d%3A/Experiment/vscode-bookmark-plugin/src/extension.ts",
+      "position": {
+        "line": 95,
+        "character": 4
+      }
+    },
+    {
+      "id": "mbbzwih3ijk2diu4tl",
+      "name": "1asd",
+      "uri": "file:///d%3A/Experiment/vscode-bookmark-plugin/src/extension.ts",
+      "position": {
+        "line": 128,
+        "character": 2
+      }
+    }
+  ],
+  "folders": [
+    {
+      "id": "mbbyyjxfgp2qewkrw4h",
+      "name": "qweqw"
+    },
+    {
+      "id": "mbbyyp3tod4ilr1h2hc",
+      "name": "222",
+      "parentId": "mbbyyjxfgp2qewkrw4h"
+    }
+  ]
+}

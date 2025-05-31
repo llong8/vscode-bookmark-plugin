@@ -1,0 +1,12 @@
+{
+  "bookmark.addBookmark": "书签: 添加书签",
+  "bookmark.removeBookmark": "删除书签",
+  "bookmark.renameBookmark": "重命名书签",
+  "bookmark.createFolder": "创建目录",
+  "bookmark.renameFolder": "重命名目录",
+  "bookmark.deleteFolder": "删除目录",
+  "bookmark.refresh": "刷新",
+  "bookmark.view.name": "书签",
+  "bookmark.exportBookmarks": "导出书签",
+  "bookmark.importBookmarks": "导入书签"
+} 

@@ -1,0 +1,163 @@
+{
+  "name": "vscode-bookmark-plugin",
+  "displayName": "Bookmark Manager",
+  "description": "一个简单易用的 VSCode 书签管理插件，支持文件夹分类、文件夹嵌套、书签和文件夹任意拖放。",
+  "version": "1.0.2",
+  "publisher": "llong",
+  "icon": "resources/logo2.png",
+  "engines": {
+    "vscode": "^1.74.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/llong8/vscode-bookmark-plugin.git"
+  },
+  "homepage": "https://github.com/llong8/vscode-bookmark-plugin/blob/main/README.md",
+  "categories": [
+    "Other"
+  ],
+  "main": "./out/extension.js",
+  "activationEvents": [
+    "*"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "command": "bookmark.addBookmark",
+        "title": "%bookmark.addBookmark%",
+        "icon": "$(bookmark)"
+      },
+      {
+        "command": "bookmark.removeBookmark",
+        "title": "%bookmark.removeBookmark%"
+      },
+      {
+        "command": "bookmark.renameBookmark",
+        "title": "%bookmark.renameBookmark%"
+      },
+      {
+        "command": "bookmark.createFolder",
+        "title": "%bookmark.createFolder%",
+        "icon": "$(new-folder)"
+      },
+      {
+        "command": "bookmark.renameFolder",
+        "title": "%bookmark.renameFolder%"
+      },
+      {
+        "command": "bookmark.deleteFolder",
+        "title": "%bookmark.deleteFolder%"
+      },
+      {
+        "command": "bookmark.refresh",
+        "title": "%bookmark.refresh%",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "bookmark.exportBookmarks",
+        "title": "%bookmark.exportBookmarks%",
+        "icon": "$(export)"
+      },
+      {
+        "command": "bookmark.importBookmarks",
+        "title": "%bookmark.importBookmarks%",
+        "icon": "$(import)"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "bookmark.addBookmark",
+        "key": "ctrl+shift+b",
+        "mac": "cmd+shift+b",
+        "when": "editorTextFocus"
+      }
+    ],
+    "menus": {
+      "editor/context": [
+        {
+          "command": "bookmark.addBookmark",
+          "group": "navigation",
+          "when": "editorTextFocus"
+        }
+      ],
+      "view/title": [
+        {
+          "command": "bookmark.addBookmark",
+          "when": "view == bookmarkView",
+          "group": "navigation@1"
+        },
+        {
+          "command": "bookmark.createFolder",
+          "when": "view == bookmarkView",
+          "group": "navigation@2"
+        },
+        {
+          "command": "bookmark.refresh",
+          "when": "view == bookmarkView",
+          "group": "navigation@3"
+        },
+        {
+          "command": "bookmark.exportBookmarks",
+          "when": "view == bookmarkView",
+          "group": "navigation@4"
+        },
+        {
+          "command": "bookmark.importBookmarks",
+          "when": "view == bookmarkView",
+          "group": "navigation@5"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "bookmark.renameBookmark",
+          "when": "view == bookmarkView && viewItem == bookmark",
+          "group": "1_modification"
+        },
+        {
+          "command": "bookmark.removeBookmark",
+          "when": "view == bookmarkView && viewItem == bookmark",
+          "group": "2_removal"
+        },
+        {
+          "command": "bookmark.renameFolder",
+          "when": "view == bookmarkView && viewItem == folder",
+          "group": "1_modification"
+        },
+        {
+          "command": "bookmark.deleteFolder",
+          "when": "view == bookmarkView && viewItem == folder",
+          "group": "2_removal"
+        }
+      ]
+    },
+    "views": {
+      "bookmark": [
+        {
+          "id": "bookmarkView",
+          "name": "%bookmark.view.name%",
+          "icon": "$(bookmark)",
+          "contextualTitle": "%bookmark.view.name%"
+        }
+      ]
+    },
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "bookmark",
+          "title": "%bookmark.view.name%",
+          "icon": "resources/bookmark.svg"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.74.0",
+    "@types/node": "^22.15.25",
+    "typescript": "^4.9.4"
+  }
+}

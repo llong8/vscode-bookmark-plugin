@@ -1,0 +1,12 @@
+{
+  "bookmark.addBookmark": "Bookmark: Add Bookmark",
+  "bookmark.removeBookmark": "Remove Bookmark",
+  "bookmark.renameBookmark": "Rename Bookmark",
+  "bookmark.createFolder": "Create Folder",
+  "bookmark.renameFolder": "Rename Folder",
+  "bookmark.deleteFolder": "Delete Folder",
+  "bookmark.refresh": "Refresh",
+  "bookmark.view.name": "Bookmarks",
+  "bookmark.exportBookmarks": "Export Bookmarks",
+  "bookmark.importBookmarks": "Import Bookmarks"
+} 
