@@ -19,27 +19,7 @@ A user-friendly VSCode bookmark management plugin that supports folder organizat
 
 
 
-## Installation & Setup
 
-### Development Environment
-1. Clone or download this repository
-2. In the project root directory, run:
-   ```bash
-   npm install
-   npm run compile
-   ```
-3. Press `F5` in VSCode to start debugging
-
-### Package Installation
-1. Install the vsce tool:
-   ```bash
-   npm install -g vsce
-   ```
-2. Package the extension:
-   ```bash
-   vsce package
-   ```
-3. Install the generated `.vsix` file in VSCode
 
 ## Usage Guide
 
@@ -93,6 +73,28 @@ A user-friendly VSCode bookmark management plugin that supports folder organizat
 |----------|--------------|--------|
 | Add Bookmark | `Ctrl+Shift+B` | `Cmd+Shift+B` |
 
+## Installation & Setup
+
+### Development Environment
+1. Clone or download this repository
+2. In the project root directory, run:
+   ```bash
+   npm install
+   npm run compile
+   ```
+3. Press `F5` in VSCode to start debugging
+
+### Package Installation
+1. Install the vsce tool:
+   ```bash
+   npm install -g vsce
+   ```
+2. Package the extension:
+   ```bash
+   vsce package
+   ```
+3. Install the generated `.vsix` file in VSCode
+
 
 ## Contributing
 
@@ -121,27 +123,7 @@ MIT License
 
 ![recording.gif](https://cdn.nlark.com/yuque/0/2025/gif/56576899/1748683855018-35c32f01-0d00-4f38-b66a-484ad578be20.gif)
 
-## 安装与运行
 
-### 开发环境运行
-1. 克隆或下载此项目
-2. 在项目根目录执行：
-   ```bash
-   npm install
-   npm run compile
-   ```
-3. 在 VSCode 中按 `F5` 启动调试
-
-### 打包安装
-1. 安装 vsce 工具：
-   ```bash
-   npm install -g vsce
-   ```
-2. 打包扩展：
-   ```bash
-   vsce package
-   ```
-3. 在 VSCode 中安装生成的 `.vsix` 文件
 
 ## 使用方法
 
@@ -194,6 +176,28 @@ MIT License
 | 功能 | Windows/Linux | macOS |
 |------|---------------|-------|
 | 添加书签 | `Ctrl+Shift+B` | `Cmd+Shift+B` |
+
+## 安装与运行
+
+### 开发环境运行
+1. 克隆或下载此项目
+2. 在项目根目录执行：
+   ```bash
+   npm install
+   npm run compile
+   ```
+3. 在 VSCode 中按 `F5` 启动调试
+
+### 打包安装
+1. 安装 vsce 工具：
+   ```bash
+   npm install -g vsce
+   ```
+2. 打包扩展：
+   ```bash
+   vsce package
+   ```
+3. 在 VSCode 中安装生成的 `.vsix` 文件
 
 ## 贡献
 
