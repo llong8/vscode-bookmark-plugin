@@ -2,24 +2,23 @@
 
 [中文文档](README.zh-cn.md)
 
-A user-friendly VSCode bookmark management plugin that supports folder organization, nested folders, and drag-and-drop functionality for both bookmarks and folders.
+A simple and easy-to-use VSCode bookmark management plugin that manages bookmarks by folders, supports folder nesting, drag-and-drop for bookmarks and folders, and same-level sorting.
 
 ## Features
 
 ✨ **Core Features**
+- 💨 Say goodbye to complex configurations, ready to use out of the box, zero configuration, easy bookmark categorization.
 - 📌 Create bookmarks in code files for quick navigation
 - 📁 Organize bookmarks using custom directories
 - 🖱️ Drag-and-drop support for easy bookmark management
+- 🔄 Support for same-level sorting, adjust the order of bookmarks and folders by dragging
 - ✏️ Customizable bookmark and directory names
 - 🎨 High-visibility bookmark icons across all themes
 - 📤 Export bookmarks to JSON files
 - 📥 Import bookmarks from JSON files
+- 🔖 Support for project-based bookmark management
 
 ![recording.gif](https://cdn.nlark.com/yuque/0/2025/gif/56576899/1748683855018-35c32f01-0d00-4f38-b66a-484ad578be20.gif)
-
-
-
-
 
 ## Usage Guide
 
@@ -35,11 +34,14 @@ A user-friendly VSCode bookmark management plugin that supports folder organizat
 - **Rename**: Right-click a bookmark and select "Rename Bookmark"
 - **Delete**: Right-click a bookmark and select "Delete Bookmark"
 - **Move**: Drag and drop bookmarks to different folders or positions
+- **Sort**: Drag bookmarks or folders within the same level to adjust their display order
 
 ### Using Directories
 - **Create Directory**: Click the "Create Folder" button in the toolbar
+- **Create Subdirectory**: Right-click a folder and select "Create Subfolder" to create a subfolder within the current folder
 - **Nested Directories**: Create multi-level directory structures
 - **Organize Bookmarks**: Drag and drop bookmarks into directories for categorization
+- **Same-level Sorting**: Drag folders within the same directory to adjust their display order
 - **Bulk Operations**: When deleting a directory, its bookmarks are automatically moved to the parent directory
 - **Rename Directory**: Right-click a directory and select "Rename Directory"
 - **Delete Directory**: Right-click a directory and select "Delete Directory"
@@ -63,8 +65,14 @@ A user-friendly VSCode bookmark management plugin that supports folder organizat
 - Automatically extracts current line code as default bookmark name
 - Displays filename and line number information
 
+### Same-level Sorting Feature
+- Support for drag-and-drop sorting of bookmarks and folders within the same level
+- Automatically detects whether the drag target is a same-level item
+- Maintains sorting state, order persists after VSCode restart
+- Support for mixed sorting: bookmarks and folders can be sorted arbitrarily within the same level
+
 ### Context Menu Operations
-- Rename and delete operations for bookmarks and folders via right-click menu
+- Create, delete, rename, move, and sort operations for bookmarks and folders via right-click menu
 - Clear operation grouping to prevent accidental operations
 
 ## Keyboard Shortcuts
@@ -73,7 +81,7 @@ A user-friendly VSCode bookmark management plugin that supports folder organizat
 |----------|--------------|--------|
 | Add Bookmark | `Ctrl+Shift+B` | `Cmd+Shift+B` |
 
-## Installation & Setup
+## Open Source
 
 ### Development Environment
 1. Clone or download this repository
@@ -95,7 +103,6 @@ A user-friendly VSCode bookmark management plugin that supports folder organizat
    ```
 3. Install the generated `.vsix` file in VSCode
 
-
 ## Contributing
 
 Issues and Pull Requests are welcome!
@@ -105,25 +112,27 @@ Issues and Pull Requests are welcome!
 MIT License
 
 
+-------
+# VSCode 书签插件 (Bookmark)
 
-# VSCode 书签插件 (Bookmark Manager)
-
-一个简单易用的 VSCode 书签管理插件，支持文件夹组织、文件夹嵌套、书签和文件夹任意拖放。
+一个简单易用的 VSCode 书签管理插件，按文件夹管理书签，文件夹嵌套文件夹、书签和文件夹任意拖放、同级排序。
 
 ## 功能特性
 
 ✨ **核心功能**
+- 💨 告别繁琐的配置，开箱即用，零配置，轻松分类书签。
 - 📌 在代码文件中创建书签，实现快速导航
 - 📁 使用自定义目录组织书签
-- 🖱️ 支持拖放功能，轻松整理书签
+- 🖱️ 支持拖放功能，轻松管理书签
+- 🔄 支持同级排序，通过拖拽调整书签和文件夹的顺序
 - ✏️ 可自定义书签和目录名称
 - 🎨 在所有主题中提供高可见度的书签图标
 - 📤 支持导出书签为 JSON 文件
 - 📥 支持从 JSON 文件导入书签
+- 🔖 支持按项目管理书签
+
 
 ![recording.gif](https://cdn.nlark.com/yuque/0/2025/gif/56576899/1748683855018-35c32f01-0d00-4f38-b66a-484ad578be20.gif)
-
-
 
 ## 使用方法
 
@@ -139,11 +148,14 @@ MIT License
 - **重命名**：右键点击书签，选择"重命名书签"
 - **删除**：右键点击书签，选择"删除书签"
 - **移动**：拖放书签到不同的文件夹或位置
+- **排序**：在同级之间拖拽书签或文件夹可以调整它们的显示顺序
 
 ### 使用目录
 - **创建目录**：点击工具栏中的"创建文件夹"按钮
+- **创建子目录**：右键点击文件夹，选择"创建子目录"在当前文件夹下创建子文件夹
 - **嵌套目录**：支持创建多级目录结构
 - **组织书签**：将书签拖放到目录中进行分类
+- **同级排序**：在同一目录内拖拽文件夹可以调整它们的显示顺序
 - **批量操作**：删除目录时，其中的书签会自动移到父级目录
 - **重命名目录**：右键点击目录，选择"重命名目录"
 - **删除目录**：右键点击目录，选择"删除目录"
@@ -167,8 +179,14 @@ MIT License
 - 添加书签时自动提取当前行代码作为默认名称
 - 显示文件名和行号信息
 
+### 同级排序功能
+- 支持在同一级别内拖拽排序书签和文件夹
+- 自动检测拖拽目标是否为同级项目
+- 保持排序状态，重启VSCode后顺序依然保持
+- 支持混合排序：书签和文件夹可以在同一级别内任意排序
+
 ### 右键菜单操作
-- 书签和文件夹的重命名、删除操作通过右键菜单访问
+- 书签和文件夹的创建、删除、重命名、移动、排序操作通过右键菜单访问
 - 清晰的操作分组，避免误操作
 
 ## 快捷键
@@ -177,7 +195,7 @@ MIT License
 |------|---------------|-------|
 | 添加书签 | `Ctrl+Shift+B` | `Cmd+Shift+B` |
 
-## 安装与运行
+## 开源
 
 ### 开发环境运行
 1. 克隆或下载此项目
@@ -199,6 +217,8 @@ MIT License
    ```
 3. 在 VSCode 中安装生成的 `.vsix` 文件
 
+
+
 ## 贡献
 
 欢迎提交 Issue 和 Pull Request！
@@ -206,3 +226,4 @@ MIT License
 ## 许可证
 
 MIT License
+
