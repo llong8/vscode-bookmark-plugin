@@ -47,7 +47,14 @@ export class BookmarkProvider implements vscode.TreeDataProvider<TreeItem>, vsco
             items.push(new BookmarkTreeItem(bookmark));
         });
 
-        return items;
+        // 按sortOrder排序
+        return items.sort((a, b) => {
+            const aOrder = a instanceof BookmarkTreeItem ? (a.bookmark.sortOrder || 0) : 
+                          a instanceof FolderItem ? (this.bookmarkManager.getFolder(a.id)?.sortOrder || 0) : 0;
+            const bOrder = b instanceof BookmarkTreeItem ? (b.bookmark.sortOrder || 0) : 
+                          b instanceof FolderItem ? (this.bookmarkManager.getFolder(b.id)?.sortOrder || 0) : 0;
+            return aOrder - bOrder;
+        });
     }
 
     private getFolderItems(folderId: string): TreeItem[] {
@@ -65,7 +72,14 @@ export class BookmarkProvider implements vscode.TreeDataProvider<TreeItem>, vsco
             items.push(new BookmarkTreeItem(bookmark));
         });
 
-        return items;
+        // 按sortOrder排序
+        return items.sort((a, b) => {
+            const aOrder = a instanceof BookmarkTreeItem ? (a.bookmark.sortOrder || 0) : 
+                          a instanceof FolderItem ? (this.bookmarkManager.getFolder(a.id)?.sortOrder || 0) : 0;
+            const bOrder = b instanceof BookmarkTreeItem ? (b.bookmark.sortOrder || 0) : 
+                          b instanceof FolderItem ? (this.bookmarkManager.getFolder(b.id)?.sortOrder || 0) : 0;
+            return aOrder - bOrder;
+        });
     }
 
     async handleDrag(source: readonly TreeItem[], dataTransfer: vscode.DataTransfer, token: vscode.CancellationToken): Promise<void> {
@@ -79,23 +93,71 @@ export class BookmarkProvider implements vscode.TreeDataProvider<TreeItem>, vsco
         }
 
         const source = transferItem.value as readonly TreeItem[];
-        if (!source) {
+        if (!source || source.length === 0) {
             return;
         }
 
-        const targetFolderId = target instanceof FolderItem ? target.id : 
-                              target instanceof BookmarkTreeItem ? target.bookmark.folderId : 
-                              undefined;
+        const sourceItem = source[0]; // 只处理单个拖拽项
 
-        source.forEach(item => {
-            if (item instanceof BookmarkTreeItem) {
-                this.bookmarkManager.moveBookmark(item.bookmark.id, targetFolderId);
-            } else if (item instanceof FolderItem) {
-                this.bookmarkManager.moveFolder(item.id, targetFolderId);
+        // 如果没有目标，说明拖拽到空白区域，移动到根目录
+        if (!target) {
+            if (sourceItem instanceof BookmarkTreeItem) {
+                this.bookmarkManager.moveBookmark(sourceItem.bookmark.id, undefined);
+            } else if (sourceItem instanceof FolderItem) {
+                this.bookmarkManager.moveFolder(sourceItem.id, undefined);
             }
-        });
+            this.refresh();
+            return;
+        }
+
+        // 检查是否为同级排序
+        const isSameLevelReorder = this.isSameLevelItems(sourceItem, target);
+        
+        if (isSameLevelReorder) {
+            // 同级排序
+            const sourceId = sourceItem instanceof BookmarkTreeItem ? sourceItem.bookmark.id : sourceItem.id;
+            const targetId = target instanceof BookmarkTreeItem ? target.bookmark.id : target.id;
+            
+            // 拖拽到目标项之前（上方）
+            this.bookmarkManager.reorderItemsByDrag(sourceId, targetId, 'before');
+        } else {
+            // 移动到不同文件夹
+            const targetFolderId = target instanceof FolderItem ? target.id : 
+                                  target instanceof BookmarkTreeItem ? target.bookmark.folderId : 
+                                  undefined;
+
+            if (sourceItem instanceof BookmarkTreeItem) {
+                this.bookmarkManager.moveBookmark(sourceItem.bookmark.id, targetFolderId);
+            } else if (sourceItem instanceof FolderItem) {
+                this.bookmarkManager.moveFolder(sourceItem.id, targetFolderId);
+            }
+        }
 
         this.refresh();
+    }
+
+    // 检查两个项目是否在同一级别
+    private isSameLevelItems(source: TreeItem, target: TreeItem): boolean {
+        let sourceParentId: string | undefined;
+        let targetParentId: string | undefined;
+
+        // 获取源项目的父级ID
+        if (source instanceof BookmarkTreeItem) {
+            sourceParentId = source.bookmark.folderId;
+        } else if (source instanceof FolderItem) {
+            const folder = this.bookmarkManager.getFolder(source.id);
+            sourceParentId = folder?.parentId;
+        }
+
+        // 获取目标项目的父级ID
+        if (target instanceof BookmarkTreeItem) {
+            targetParentId = target.bookmark.folderId;
+        } else if (target instanceof FolderItem) {
+            const folder = this.bookmarkManager.getFolder(target.id);
+            targetParentId = folder?.parentId;
+        }
+
+        return sourceParentId === targetParentId;
     }
 }
 
