@@ -18,6 +18,15 @@ export function activate(context: vscode.ExtensionContext) {
         dragAndDropController: bookmarkProvider
     });
 
+    // 监听文件夹展开和折叠事件
+    treeView.onDidExpandElement(e => {
+        bookmarkProvider.onDidExpandElement(e.element);
+    });
+
+    treeView.onDidCollapseElement(e => {
+        bookmarkProvider.onDidCollapseElement(e.element);
+    });
+
     // 注册命令
     context.subscriptions.push(
         vscode.commands.registerCommand('bookmark.addBookmark', async () => {

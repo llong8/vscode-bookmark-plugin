@@ -10,6 +10,9 @@ export class BookmarkProvider implements vscode.TreeDataProvider<TreeItem>, vsco
 
     private _onDidChangeTreeData: vscode.EventEmitter<TreeItem | undefined | null | void> = new vscode.EventEmitter<TreeItem | undefined | null | void>();
     readonly onDidChangeTreeData: vscode.Event<TreeItem | undefined | null | void> = this._onDidChangeTreeData.event;
+    
+    // 跟踪文件夹的展开状态
+    private expandedFolders: Set<string> = new Set();
 
     constructor(private bookmarkManager: BookmarkManager) {}
 
@@ -18,6 +21,13 @@ export class BookmarkProvider implements vscode.TreeDataProvider<TreeItem>, vsco
     }
 
     getTreeItem(element: TreeItem): vscode.TreeItem {
+        if (element instanceof FolderItem) {
+            // 根据当前的展开状态设置collapsibleState
+            const isExpanded = this.expandedFolders.has(element.id);
+            element.collapsibleState = isExpanded ? 
+                vscode.TreeItemCollapsibleState.Expanded : 
+                vscode.TreeItemCollapsibleState.Collapsed;
+        }
         return element;
     }
 
@@ -26,10 +36,26 @@ export class BookmarkProvider implements vscode.TreeDataProvider<TreeItem>, vsco
             // 返回根级别的项目
             return Promise.resolve(this.getRootItems());
         } else if (element instanceof FolderItem) {
+            // 记录文件夹被展开了
+            this.expandedFolders.add(element.id);
             // 返回文件夹中的项目
             return Promise.resolve(this.getFolderItems(element.id));
         }
         return Promise.resolve([]);
+    }
+
+    // 公开方法：处理文件夹折叠事件
+    public onDidCollapseElement(element: TreeItem): void {
+        if (element instanceof FolderItem) {
+            this.expandedFolders.delete(element.id);
+        }
+    }
+
+    // 公开方法：处理文件夹展开事件
+    public onDidExpandElement(element: TreeItem): void {
+        if (element instanceof FolderItem) {
+            this.expandedFolders.add(element.id);
+        }
     }
 
     private getRootItems(): TreeItem[] {
@@ -110,26 +136,53 @@ export class BookmarkProvider implements vscode.TreeDataProvider<TreeItem>, vsco
             return;
         }
 
-        // 检查是否为同级排序
-        const isSameLevelReorder = this.isSameLevelItems(sourceItem, target);
-        
-        if (isSameLevelReorder) {
-            // 同级排序
-            const sourceId = sourceItem instanceof BookmarkTreeItem ? sourceItem.bookmark.id : sourceItem.id;
-            const targetId = target instanceof BookmarkTreeItem ? target.bookmark.id : target.id;
+        // 当目标是文件夹时，根据文件夹的展开状态决定行为
+        if (target instanceof FolderItem) {
+            const isTargetExpanded = this.expandedFolders.has(target.id);
+            const isSameLevelReorder = this.isSameLevelItems(sourceItem, target);
             
-            // 拖拽到目标项之前（上方）
-            this.bookmarkManager.reorderItemsByDrag(sourceId, targetId, 'before');
+            if (isTargetExpanded) {
+                // 文件夹是展开状态，移动到文件夹内部
+                if (sourceItem instanceof BookmarkTreeItem) {
+                    this.bookmarkManager.moveBookmark(sourceItem.bookmark.id, target.id);
+                } else if (sourceItem instanceof FolderItem) {
+                    this.bookmarkManager.moveFolder(sourceItem.id, target.id);
+                }
+            } else if (isSameLevelReorder) {
+                // 文件夹是折叠状态且在同一级别，进行排序
+                const sourceId = sourceItem instanceof BookmarkTreeItem ? sourceItem.bookmark.id : sourceItem.id;
+                const targetId = target.id;
+                
+                // 拖拽到目标项之前（上方）
+                this.bookmarkManager.reorderItemsByDrag(sourceId, targetId, 'before');
+            } else {
+                // 文件夹是折叠状态但不在同一级别，移动到文件夹内部
+                if (sourceItem instanceof BookmarkTreeItem) {
+                    this.bookmarkManager.moveBookmark(sourceItem.bookmark.id, target.id);
+                } else if (sourceItem instanceof FolderItem) {
+                    this.bookmarkManager.moveFolder(sourceItem.id, target.id);
+                }
+            }
         } else {
-            // 移动到不同文件夹
-            const targetFolderId = target instanceof FolderItem ? target.id : 
-                                  target instanceof BookmarkTreeItem ? target.bookmark.folderId : 
-                                  undefined;
+            // 目标不是文件夹，检查是否为同级排序
+            const isSameLevelReorder = this.isSameLevelItems(sourceItem, target);
+            
+            if (isSameLevelReorder) {
+                // 同级排序
+                const sourceId = sourceItem instanceof BookmarkTreeItem ? sourceItem.bookmark.id : sourceItem.id;
+                const targetId = target instanceof BookmarkTreeItem ? target.bookmark.id : (target as FolderItem).id;
+                
+                // 拖拽到目标项之前（上方）
+                this.bookmarkManager.reorderItemsByDrag(sourceId, targetId, 'before');
+            } else {
+                // 移动到不同文件夹（目标是书签，移动到书签所在的文件夹）
+                const targetFolderId = target instanceof BookmarkTreeItem ? target.bookmark.folderId : undefined;
 
-            if (sourceItem instanceof BookmarkTreeItem) {
-                this.bookmarkManager.moveBookmark(sourceItem.bookmark.id, targetFolderId);
-            } else if (sourceItem instanceof FolderItem) {
-                this.bookmarkManager.moveFolder(sourceItem.id, targetFolderId);
+                if (sourceItem instanceof BookmarkTreeItem) {
+                    this.bookmarkManager.moveBookmark(sourceItem.bookmark.id, targetFolderId);
+                } else if (sourceItem instanceof FolderItem) {
+                    this.bookmarkManager.moveFolder(sourceItem.id, targetFolderId);
+                }
             }
         }
 
@@ -187,7 +240,7 @@ export class FolderItem extends vscode.TreeItem {
     constructor(
         public readonly id: string,
         public readonly label: string,
-        public readonly collapsibleState: vscode.TreeItemCollapsibleState = vscode.TreeItemCollapsibleState.Collapsed
+        public collapsibleState: vscode.TreeItemCollapsibleState = vscode.TreeItemCollapsibleState.Collapsed
     ) {
         super(label, collapsibleState);
 
