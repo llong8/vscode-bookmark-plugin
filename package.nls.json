@@ -3,6 +3,7 @@
   "bookmark.removeBookmark": "Remove Bookmark",
   "bookmark.renameBookmark": "Rename Bookmark",
   "bookmark.createFolder": "Create Folder",
+  "bookmark.createSubFolder": "Create Subfolder",
   "bookmark.renameFolder": "Rename Folder",
   "bookmark.deleteFolder": "Delete Folder",
   "bookmark.refresh": "Refresh",

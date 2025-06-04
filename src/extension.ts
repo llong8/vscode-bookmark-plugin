@@ -87,6 +87,17 @@ export function activate(context: vscode.ExtensionContext) {
             bookmarkProvider.refresh();
         }),
 
+        vscode.commands.registerCommand('bookmark.createSubFolder', async (folder) => {
+            const name = await vscode.window.showInputBox({
+                prompt: 'Enter subfolder name'
+            });
+
+            if (name) {
+                bookmarkManager.createFolder(name, folder.id);
+                bookmarkProvider.refresh();
+            }
+        }),
+
         vscode.commands.registerCommand('bookmark.refresh', () => {
             bookmarkProvider.refresh();
         }),

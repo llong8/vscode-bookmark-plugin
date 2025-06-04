@@ -3,6 +3,7 @@
   "bookmark.removeBookmark": "删除书签",
   "bookmark.renameBookmark": "重命名书签",
   "bookmark.createFolder": "创建目录",
+  "bookmark.createSubFolder": "创建子目录",
   "bookmark.renameFolder": "重命名目录",
   "bookmark.deleteFolder": "删除目录",
   "bookmark.refresh": "刷新",
