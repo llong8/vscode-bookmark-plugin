@@ -153,8 +153,15 @@ export class BookmarkProvider implements vscode.TreeDataProvider<TreeItem>, vsco
                 const sourceId = sourceItem instanceof BookmarkTreeItem ? sourceItem.bookmark.id : sourceItem.id;
                 const targetId = target.id;
                 
-                // 拖拽到目标项之前（上方）
-                this.bookmarkManager.reorderItemsByDrag(sourceId, targetId, 'before');
+                // 获取源和目标在容器中的索引来判断拖拽方向
+                const container = this.bookmarkManager.getAllBookmarksInSameContainer(sourceId);
+                const sourceIndex = container.findIndex(item => item.id === sourceId);
+                const targetIndex = container.findIndex(item => item.id === targetId);
+                
+                // 根据拖拽方向决定插入位置
+                const position = sourceIndex > targetIndex ? 'before' : 'after';
+                
+                this.bookmarkManager.reorderItemsByDrag(sourceId, targetId, position);
             } else {
                 // 文件夹是折叠状态但不在同一级别，移动到文件夹内部
                 if (sourceItem instanceof BookmarkTreeItem) {
@@ -168,12 +175,19 @@ export class BookmarkProvider implements vscode.TreeDataProvider<TreeItem>, vsco
             const isSameLevelReorder = this.isSameLevelItems(sourceItem, target);
             
             if (isSameLevelReorder) {
-                // 同级排序
+                // 同级排序 - 根据拖拽方向决定位置
                 const sourceId = sourceItem instanceof BookmarkTreeItem ? sourceItem.bookmark.id : sourceItem.id;
                 const targetId = target instanceof BookmarkTreeItem ? target.bookmark.id : (target as FolderItem).id;
                 
-                // 拖拽到目标项之前（上方）
-                this.bookmarkManager.reorderItemsByDrag(sourceId, targetId, 'before');
+                // 获取源和目标在容器中的索引来判断拖拽方向
+                const container = this.bookmarkManager.getAllBookmarksInSameContainer(sourceId);
+                const sourceIndex = container.findIndex(item => item.id === sourceId);
+                const targetIndex = container.findIndex(item => item.id === targetId);
+                
+                // 根据拖拽方向决定插入位置
+                const position = sourceIndex > targetIndex ? 'before' : 'after';
+                
+                this.bookmarkManager.reorderItemsByDrag(sourceId, targetId, position);
             } else {
                 // 移动到不同文件夹（目标是书签，移动到书签所在的文件夹）
                 const targetFolderId = target instanceof BookmarkTreeItem ? target.bookmark.folderId : undefined;

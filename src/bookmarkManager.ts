@@ -212,7 +212,7 @@ export class BookmarkManager {
     }
 
     // 获取同一容器中的所有项目（书签和文件夹）
-    private getAllBookmarksInSameContainer(itemId: string): { id: string, type: 'bookmark' | 'folder', sortOrder: number }[] {
+    getAllBookmarksInSameContainer(itemId: string): { id: string, type: 'bookmark' | 'folder', sortOrder: number }[] {
         let containerId: string | undefined;
         
         // 确定容器ID
