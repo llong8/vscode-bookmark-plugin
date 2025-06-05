@@ -241,9 +241,9 @@ export class BookmarkTreeItem extends vscode.TreeItem {
         this.contextValue = 'bookmark';
         
         this.command = {
-            command: 'vscode.open',
+            command: 'bookmark.goToBookmark',
             title: 'Open',
-            arguments: [bookmark.uri, { selection: new vscode.Range(bookmark.position, bookmark.position) }]
+            arguments: [bookmark.id]
         };
 
         this.iconPath = new vscode.ThemeIcon('bookmark');

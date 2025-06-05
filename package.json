@@ -2,7 +2,7 @@
   "name": "vscode-bookmark-plugin",
   "displayName": "Bookmark Manager",
   "description": "一个简单易用的代码书签插件，可按文件夹分类、文件夹嵌套、书签和文件夹任意拖放。",
-  "version": "1.0.6",
+  "version": "1.0.8",
   "publisher": "llong",
   "icon": "resources/logo2.png",
   "keywords": [
@@ -37,6 +37,10 @@
         "command": "bookmark.addBookmark",
         "title": "%bookmark.addBookmark%",
         "icon": "$(bookmark)"
+      },
+      {
+        "command": "bookmark.goToBookmark",
+        "title": "Go to Bookmark"
       },
       {
         "command": "bookmark.removeBookmark",

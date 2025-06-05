@@ -46,8 +46,37 @@ export function activate(context: vscode.ExtensionContext) {
             });
 
             if (name) {
-                bookmarkManager.addBookmark(document.uri, position, name);
+                bookmarkManager.addBookmark(document.uri, position, name, undefined, lineText);
                 bookmarkProvider.refresh();
+            }
+        }),
+
+        vscode.commands.registerCommand('bookmark.goToBookmark', async (bookmarkId: string) => {
+            const bookmark = bookmarkManager.getBookmark(bookmarkId);
+            if (!bookmark) {
+                vscode.window.showErrorMessage('Bookmark not found');
+                return;
+            }
+
+            try {
+                // 使用智能定位功能找到书签的实际位置
+                const smartPosition = await bookmarkManager.findSmartBookmarkPosition(bookmark);
+                
+                // 打开文档并跳转到智能定位的位置
+                const document = await vscode.workspace.openTextDocument(bookmark.uri);
+                const editor = await vscode.window.showTextDocument(document);
+                
+                const range = new vscode.Range(smartPosition, smartPosition);
+                editor.selection = new vscode.Selection(smartPosition, smartPosition);
+                editor.revealRange(range, vscode.TextEditorRevealType.InCenter);
+                
+                // 如果位置发生了变化，更新书签位置
+                if (smartPosition.line !== bookmark.position.line || smartPosition.character !== bookmark.position.character) {
+                    await bookmarkManager.updateBookmarkPosition(bookmarkId);
+                    bookmarkProvider.refresh();
+                }
+            } catch (error) {
+                vscode.window.showErrorMessage(`Error opening bookmark: ${error instanceof Error ? error.message : 'Unknown error'}`);
             }
         }),
 
@@ -201,7 +230,11 @@ export function activate(context: vscode.ExtensionContext) {
     // 监听编辑器变化
     context.subscriptions.push(
         vscode.window.onDidChangeActiveTextEditor(() => updateDecorations()),
-        vscode.workspace.onDidChangeTextDocument(() => updateDecorations())
+        vscode.workspace.onDidChangeTextDocument((event) => {
+            updateDecorations();
+            // 当文档内容发生变化时，可以考虑更新相关书签的位置
+            // 这里我们选择延迟处理，避免频繁更新
+        })
     );
 
     // 初始更新

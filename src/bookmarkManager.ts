@@ -5,6 +5,7 @@ export interface Bookmark {
     name: string;
     uri: vscode.Uri;
     position: vscode.Position;
+    lineContent: string;
     folderId?: string;
     sortOrder?: number;
 }
@@ -36,6 +37,7 @@ export class BookmarkManager {
                 name: data.name,
                 uri: vscode.Uri.parse(data.uri),
                 position: new vscode.Position(data.position.line, data.position.character),
+                lineContent: data.lineContent || '',
                 folderId: data.folderId,
                 sortOrder: data.sortOrder
             };
@@ -56,6 +58,7 @@ export class BookmarkManager {
                 line: bookmark.position.line,
                 character: bookmark.position.character
             },
+            lineContent: bookmark.lineContent,
             folderId: bookmark.folderId,
             sortOrder: bookmark.sortOrder
         }));
@@ -66,9 +69,17 @@ export class BookmarkManager {
         this.context.globalState.update(this.foldersKey, foldersArray);
     }
 
-    addBookmark(uri: vscode.Uri, position: vscode.Position, name: string, folderId?: string): string {
+    addBookmark(uri: vscode.Uri, position: vscode.Position, name: string, folderId?: string, lineContent?: string): string {
         const id = this.generateId();
-        const bookmark: Bookmark = { id, name, uri, position, folderId, sortOrder: this.getNextSortOrder() };
+        const bookmark: Bookmark = { 
+            id, 
+            name, 
+            uri, 
+            position, 
+            lineContent: lineContent || '',
+            folderId, 
+            sortOrder: this.getNextSortOrder() 
+        };
         this.bookmarks.set(id, bookmark);
         this.saveBookmarks();
         return id;
@@ -289,6 +300,7 @@ export class BookmarkManager {
                     line: bookmark.position.line,
                     character: bookmark.position.character
                 },
+                lineContent: bookmark.lineContent,
                 folderId: bookmark.folderId,
                 sortOrder: bookmark.sortOrder
             })),
@@ -350,6 +362,7 @@ export class BookmarkManager {
                     name: bookmarkData.name,
                     uri: vscode.Uri.parse(bookmarkData.uri),
                     position: new vscode.Position(bookmarkData.position.line, bookmarkData.position.character),
+                    lineContent: bookmarkData.lineContent || '',
                     folderId: bookmarkData.folderId && oldToNewFolderIdMap.has(bookmarkData.folderId) 
                         ? oldToNewFolderIdMap.get(bookmarkData.folderId) 
                         : undefined,
@@ -370,6 +383,72 @@ export class BookmarkManager {
                 success: false, 
                 message: `导入失败: ${error instanceof Error ? error.message : '未知错误'}` 
             };
+        }
+    }
+
+    /**
+     * 智能查找书签的实际位置
+     * 如果原位置的内容不匹配，会在附近查找相似的内容
+     */
+    async findSmartBookmarkPosition(bookmark: Bookmark): Promise<vscode.Position> {
+        try {
+            const document = await vscode.workspace.openTextDocument(bookmark.uri);
+            const originalPosition = bookmark.position;
+            const targetContent = bookmark.lineContent.trim();
+            
+            // 如果没有保存行内容，直接返回原位置
+            if (!targetContent) {
+                return originalPosition;
+            }
+
+            // 首先检查原位置是否仍然匹配
+            if (originalPosition.line < document.lineCount) {
+                const currentLineText = document.lineAt(originalPosition.line).text.trim();
+                if (currentLineText === targetContent) {
+                    return originalPosition;
+                }
+            }
+
+            // 在原位置附近搜索匹配的内容
+            const searchRange = 20; // 向上下各搜索20行
+            const startLine = Math.max(0, originalPosition.line - searchRange);
+            const endLine = Math.min(document.lineCount - 1, originalPosition.line + searchRange);
+
+            // 精确匹配
+            for (let i = startLine; i <= endLine; i++) {
+                const lineText = document.lineAt(i).text.trim();
+                if (lineText === targetContent) {
+                    return new vscode.Position(i, originalPosition.character);
+                }
+            }
+
+            // 如果精确匹配失败，尝试模糊匹配（包含关系）
+            for (let i = startLine; i <= endLine; i++) {
+                const lineText = document.lineAt(i).text.trim();
+                if (lineText.includes(targetContent) || targetContent.includes(lineText)) {
+                    return new vscode.Position(i, originalPosition.character);
+                }
+            }
+
+            // 如果都匹配失败，返回原位置
+            return originalPosition;
+        } catch (error) {
+            console.error('智能定位书签时出错:', error);
+            return bookmark.position;
+        }
+    }
+
+    /**
+     * 更新书签的位置信息（当文档内容变化时调用）
+     */
+    async updateBookmarkPosition(bookmarkId: string): Promise<void> {
+        const bookmark = this.getBookmark(bookmarkId);
+        if (!bookmark) return;
+
+        const newPosition = await this.findSmartBookmarkPosition(bookmark);
+        if (newPosition.line !== bookmark.position.line || newPosition.character !== bookmark.position.character) {
+            bookmark.position = newPosition;
+            this.saveBookmarks();
         }
     }
 } 
